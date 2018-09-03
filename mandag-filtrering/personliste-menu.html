@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hent JSON</title>
+    <style>
+        header {
+            text-align: center;
+        }
+
+        body {
+            background-color: rgb(240, 240, 240);
+        }
+
+        article {
+            padding: 1em;
+            background-color: white;
+        }
+
+        .data-container article img {
+            width: 100%;
+        }
+
+        .data-container {
+            margin: 0 auto;
+            display: grid;
+        }
+
+        @media screen and (min-width:580px) {
+            .data-container {
+                padding-left: 10%;
+                padding-right: 10%;
+                grid-gap: 5px;
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <button class="menu-item" data-civilstatus="alle">Alle Personer</button>
+            <button class="menu-item" data-civilstatus="single">Singler</button>
+            <button class="menu-item" data-civilstatus="optaget">I forhold</button>
+        </nav>
+    </header>
+
+
+    <main class="container">
+        <section class="data-container"></section>
+    </main>
+    <template class="data-template">
+        <article class="person">
+            <h2></h2>
+            <img src="" alt=""><br>
+            status: <span class="data-civilstatus"></span>
+
+
+
+
+        </article>
+    </template>
+
+    <script>
+        let personer,
+            civilFilter = "single"; //filter-variabel
+        document.addEventListener("DOMContentLoaded", hentJson);
+
+        async function hentJson() {
+            let myJson = await fetch("personliste.json");
+            personer = await myJson.json();
+            visPersoner();
+        }
+
+        function visPersoner() {
+            let dest = document.querySelector(".data-container"),
+                temp = document.querySelector(".data-template");
+            //løb personlisten igennem og lav en klon
+            personer.forEach(person => {
+                if (person.civilstatus == civilFilter) {
+
+
+                    let klon = temp.cloneNode(true).content;
+                    //indsæt data i klonen
+                    klon.querySelector("h2").textContent = person.navn;
+                    klon.querySelector("img").src = person.billede;
+                    klon.querySelector(".data-civilstatus").textContent = person.civilstatus;
+
+                    //placer klon i DOM
+                    dest.appendChild(klon);
+                }
+            })
+        }
+    </script>
+</body>
+</html>
